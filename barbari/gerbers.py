@@ -25,11 +25,11 @@ class GerberProject(object):
         return self._path
 
     def detect_layer_type(self, filename: str, layer):
-        if '-B.Cu.' in filename:
+        if '-B_Cu.' in filename:
             return LayerType.B_CU
-        elif '-F.Cu.' in filename:
+        elif '-F_Cu.' in filename:
             return LayerType.F_CU
-        elif '-Edge.Cuts.' in filename:
+        elif '-Edge_Cuts.' in filename:
             return LayerType.EDGE_CUTS
         elif '-Alignment.' in filename:
             return LayerType.ALIGNMENT
