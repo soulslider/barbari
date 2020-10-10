@@ -1,5 +1,6 @@
 import logging
 import os
+import platform
 from typing import Iterable, List, Union
 
 from .gerbers import GerberProject
@@ -8,6 +9,14 @@ from .constants import LayerType, FlatcamLayer
 
 
 logger = logging.getLogger(__name__)
+
+
+def format_path(path):
+    if platform.system() == "Windows":
+        path = path.replace('\\\\', '\\').replace('\\', '\\\\')
+        if ' ' in path:
+            path = '"' + path + '"'
+    return path
 
 
 class FlatcamProcess(object):
@@ -129,7 +138,7 @@ class FlatcamWriteGcode(FlatcamProcess):
         return super().__init__(
             "write_gcode",
             self.get_layer_name(layer),
-            os.path.join(
+            format_path(os.path.join(
                 path,
                 "{counter}.{name}.{tool_size}.{tool_name}.gcode".format(
                     counter=str(counter).zfill(2),
@@ -137,7 +146,7 @@ class FlatcamWriteGcode(FlatcamProcess):
                     tool_name=tool_name,
                     tool_size=tool_size,
                 )
-            )
+            ))
         )
 
 
@@ -171,13 +180,13 @@ class FlatcamProjectGenerator(object):
             if layer_type == LayerType.DRILL:
                 yield FlatcamProcess(
                     "open_excellon",
-                    layer.filename,
+                    format_path(layer.filename),
                     outname=layer_type.value,
                 )
             else:
                 yield FlatcamProcess(
                     "open_gerber",
-                    layer.filename,
+                    format_path(layer.filename),
                     outname=layer_type.value,
                 )
 
